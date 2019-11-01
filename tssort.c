@@ -92,7 +92,8 @@ sort_worker_thread(void* arg) {
   for(int i=0; i<in->index; i++) {
     start_i += in->sum[i];
   }
-  printf("wrting starting at %ld, size %ld\n", start_i, xs->size);
+
+  // printf("wrting starting at %ld, size %ld\n", start_i, xs->size);
   off_t rv;
   rv = lseek(fd, sizeof(float)*start_i, SEEK_SET);
   check_rv(rv);
@@ -126,8 +127,8 @@ void
 sample_sort(floats* data, long size, int P, barrier* bb)
 {
   floats* samps = sample(data, size, P);
-  puts("sampled:");
-  floats_print(samps);
+  // puts("sampled:");
+  // floats_print(samps);
 
   run_sort_workers(data, size, P, samps, bb);
 }
@@ -164,7 +165,7 @@ int main(int argc, char* argv[]) {
   read(fd, &num, sizeof(long));
 
   floats* data = make_floats(num);
-  printf("size: %ld\n", num);
+  // printf("size: %ld\n", num);
   
   float buf[num];
   rv = read(fd, buf, num *sizeof(float));
@@ -172,19 +173,18 @@ int main(int argc, char* argv[]) {
   for(long i=0;i<num;++i) {
     floats_push(data, buf[i]);
   }
-  floats_print(data);
-
+  // floats_print(data);
 
   barrier* bb = make_barrier(P);
   sample_sort(data, num, P, bb);
 
-  float res[num];
-  int outfd = open(outfname, O_RDONLY);
-  check_rv(fd);
-  rv = read(outfd, res, num*sizeof(float));
-  for(long i=0;i<num; i++) {
-    printf("res: %f\n", res[i]);
-  }
+  // float res[num];
+  // int outfd = open(outfname, O_RDONLY);
+  // check_rv(fd);
+  // rv = read(outfd, res, num*sizeof(float));
+  // for(long i=0;i<num; i++) {
+  //   printf("res: %f\n", res[i]);
+  // }
 
   return 0;
 }

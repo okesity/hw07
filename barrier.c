@@ -10,8 +10,6 @@
 
 #include "barrier.h"
 
-
-
 barrier*
 make_barrier(int nn)
 {
@@ -32,13 +30,10 @@ barrier_wait(barrier* bb)
     bb->seen += 1;
 
     if (bb->seen >= bb->count) {
-        puts("all entered!");
-        fflush(stdout);
         pthread_cond_broadcast(&(bb->cond));
     }
     else {
         while(bb->seen < bb->count) {
-            puts("waiting");
             pthread_cond_wait(&(bb->cond), &(bb->mutex));
         }
     }
