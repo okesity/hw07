@@ -62,6 +62,7 @@ sample(floats* data, long size, int P)
         }
     }
     floats_push(res, __FLT_MAX__);
+    free_floats(samp);
     return res;
 }
 
@@ -101,6 +102,9 @@ sort_worker_thread(void* arg) {
   wrv = write(fd, xs->data, xs->size * sizeof(float));
   check_rv(wrv);
 
+  free_floats(xs);
+  free(in);
+  close(fd);
   return 0;
 }
 
@@ -117,7 +121,7 @@ run_sort_workers(floats* data, long size, int P, floats* samps, barrier* bb)
   }
   for (int i = 0; i < P; ++i) {
     rv = pthread_join(threads[i], 0);
-    check_rv(rv);
+    check_rv(rv);  
   }
   return 0;
 }
@@ -127,10 +131,9 @@ void
 sample_sort(floats* data, long size, int P, barrier* bb)
 {
   floats* samps = sample(data, size, P);
-  // puts("sampled:");
-  // floats_print(samps);
-
   run_sort_workers(data, size, P, samps, bb);
+  free_floats(samps);
+
 }
 
 int main(int argc, char* argv[]) {
@@ -177,6 +180,11 @@ int main(int argc, char* argv[]) {
 
   barrier* bb = make_barrier(P);
   sample_sort(data, num, P, bb);
+
+  close(fd);
+
+  free_floats(data);
+  free_barrier(bb);
 
   // float res[num];
   // int outfd = open(outfname, O_RDONLY);
