@@ -26,10 +26,8 @@ make_barrier(int nn)
 }
 
 void
-barrier_wait(barrier* bb, int id)
+barrier_wait(barrier* bb)
 {
-    printf("%d waiting\n", bb->seen);
-    fflush(stdout);
     pthread_mutex_lock(&(bb->mutex));
     bb->seen += 1;
 
@@ -39,15 +37,11 @@ barrier_wait(barrier* bb, int id)
         pthread_cond_broadcast(&(bb->cond));
     }
     else {
-        printf("%d, seen %d, count %d\n", id, bb->seen, bb->count);
-        fflush(stdout);                                         
         while(bb->seen < bb->count) {
             puts("waiting");
             pthread_cond_wait(&(bb->cond), &(bb->mutex));
         }
     }
-    printf("%d unlocked!\n", bb->seen);
-    fflush(stdout);
     pthread_mutex_unlock(&(bb->mutex));
     return;
 }

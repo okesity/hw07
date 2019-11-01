@@ -17,7 +17,7 @@ typedef struct barrier {
 } barrier;
 
 barrier* make_barrier(int nn);
-void barrier_wait(barrier* bb, int id);
+void barrier_wait(barrier* bb);
 void free_barrier(barrier* bb);
 
 
